@@ -1,0 +1,15 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Jentlemens | Athletic Fit Menswear",
+  description: "A disciplined men's wardrobe system built around Athletic Fit tailoring, neutral colors, made-to-order suiting, and limited seasonal footwear.",
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
