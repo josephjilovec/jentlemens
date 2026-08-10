@@ -6,11 +6,11 @@ export function SiteHeader() {
     <>
       <div className="announcement">ATHLETIC FIT / MADE-TO-ORDER SUITING / LIMITED SEASONAL FOOTWEAR</div>
       <header className="siteHeader">
-        <Link className="brand" href="/"><span>J</span><b>JENTLEMENS</b></Link>
+        <a className="brand" href="/"><span>J</span><b>JENTLEMENS</b></a>
         <nav className="mainNav" aria-label="Primary navigation">
-          {departments.map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
+          {departments.map((item) => <a key={item.href} href={item.href}>{item.label}</a>)}
         </nav>
-        <Link className="bagLink" href="/new">Shop</Link>
+        <a className="bagLink" href="/new">Shop</a>
       </header>
     </>
   );
