@@ -1,20 +1,9 @@
 import Link from "next/link";
 import type { Product } from "@/lib/catalog";
+import { CollectionExperience } from "@/components/CollectionExperience";
 
 export function ProductGrid({ products }: { products: Product[] }) {
-  return (
-    <div className="grid productGrid">
-      {products.map((product) => (
-        <article key={product.name}>
-          <div className="photo"><img src={product.img} alt={product.name} /></div>
-          <div className="meta">
-            <div><h3>{product.name}</h3><p>{product.colors}</p><small>{product.note}</small></div>
-            <strong>{product.price}</strong>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
+  return <CollectionExperience products={products} />;
 }
 
 export function DepartmentPage({ eyebrow, title, intro, image, products, children }: { eyebrow: string; title: string; intro: string; image: string; products: Product[]; children?: React.ReactNode }) {
