@@ -1,4 +1,5 @@
 import { MeasurementStudio } from "@/components/MeasurementStudio";
+import "./measurement-studio.css";
 
 export default function MadeToOrderPage(){
   return <main>
