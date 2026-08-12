@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./base.css";
 import "./v2.css";
+import "./brand-guard.css";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 
 export const metadata: Metadata = {
