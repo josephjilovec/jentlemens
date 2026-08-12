@@ -1,9 +1,13 @@
 export type MaterialBadge = "Tailored Wool" | "Pure Cotton" | "4-Way Stretch" | "Moisture-Wicking" | "Heavy Silver" | "Solid Steel" | "Leathercraft";
 
-export type StoreProduct = {
+export type DepartmentKey = "tailoring" | "shirting" | "performance" | "footwear" | "accessories";
+
+export interface StoreProduct {
+  id: string;
   slug: string;
   name: string;
-  department: "tailoring" | "shirting" | "performance" | "footwear" | "accessories";
+  department: DepartmentKey;
+  genderTarget: "menswear";
   collection: string;
   price: number;
   colors: string[];
@@ -12,160 +16,407 @@ export type StoreProduct = {
   fit: string;
   badges: MaterialBadge[];
   image: string;
+  alt: string;
   hoverImage: string;
+  hoverAlt: string;
   description: string;
-};
+}
 
 export type DepartmentConfig = {
-  key: StoreProduct["department"];
+  key: DepartmentKey;
   label: string;
   href: string;
   eyebrow: string;
   title: string;
   intro: string;
   hero: string;
+  heroAlt: string;
+  visualTarget: "menswear";
   tone: "warm" | "clean";
   columns: { title: string; links: { label: string; href: string }[] }[];
-  featured: { label: string; title: string; href: string; image: string };
+  featured: { label: string; title: string; href: string; image: string; alt: string };
 };
+
+const imageUrl = (id: string, width = 1400, quality = 88) =>
+  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&q=${quality}`;
+
+/**
+ * Curated visual allow-list. Every ID below has been manually reviewed for the
+ * Jentlemens menswear rule: men's apparel, masculine tailoring, men's footwear,
+ * men's neckwear, or gender-neutral leather/hardware only.
+ */
+export const approvedMenswearImageIds = [
+  "photo-1594938298603-c8148c4dae35", // men's tailored suit
+  "photo-1617137968427-85924c800a22", // male model in tailored suit
+  "photo-1602810318383-e386cc2a3ccf", // men's dress shirts
+  "photo-1677505385024-5c6d27eae5f6", // rack of men's neckties
+  "photo-1598032895397-b9472444bf93", // men's shirt and tie
+  "photo-1549476464-37392f717541", // male athlete in gym training apparel
+  "photo-1517838277536-f5f99be501cd", // men's performance training detail
+  "photo-1614252235316-8c857d38b5f4", // men's formal leather shoes
+  "photo-1624222247344-550fb60583dc", // leather dress belt detail
+  "photo-1548036328-c9fa89d128fa", // structured leather backpack
+  "photo-1523170335258-f5ed11844a49", // steel/leather wristwatch
+] as const;
+
+const menswearAltLanguage = /(men'?s|male|menswear|necktie|tie|suit|tailor|shirt|athlete|training|oxford|shoe|belt|leather|backpack|watch|timepiece|hardware)/i;
+
+export function isApprovedMenswearImage(url: string) {
+  return approvedMenswearImageIds.some((id) => url.includes(id));
+}
+
+export function defineMenswearProduct(product: StoreProduct): StoreProduct {
+  if (product.genderTarget !== "menswear") {
+    throw new Error(`Jentlemens brand guard: ${product.name} must target menswear.`);
+  }
+  if (!menswearAltLanguage.test(product.alt) || !menswearAltLanguage.test(product.hoverAlt)) {
+    throw new Error(`Jentlemens brand guard: ${product.name} requires explicit menswear/product alt text.`);
+  }
+  if (!isApprovedMenswearImage(product.image) || !isApprovedMenswearImage(product.hoverImage)) {
+    throw new Error(`Jentlemens brand guard: ${product.name} uses an image outside the approved menswear allow-list.`);
+  }
+  return Object.freeze(product);
+}
+
+export const verifiedMenswearAssets = {
+  tailoring: {
+    primary: imageUrl("photo-1594938298603-c8148c4dae35", 2200, 92),
+    primaryAlt: "Male model wearing a structured blue tailored suit",
+    secondary: imageUrl("photo-1617137968427-85924c800a22", 1400, 90),
+    secondaryAlt: "Male model in a fitted navy suit and men's leather dress shoes",
+  },
+  shirting: {
+    primary: imageUrl("photo-1602810318383-e386cc2a3ccf", 2200, 92),
+    primaryAlt: "Folded men's dress shirts arranged as a refined shirting edit",
+    secondary: imageUrl("photo-1598032895397-b9472444bf93", 1400, 90),
+    secondaryAlt: "Men's dress shirt styled with a structured necktie",
+  },
+  neckwear: {
+    primary: imageUrl("photo-1677505385024-5c6d27eae5f6", 1800, 92),
+    primaryAlt: "Rack of men's silk neckties in formal colors and patterns",
+    secondary: imageUrl("photo-1598032895397-b9472444bf93", 1400, 90),
+    secondaryAlt: "Men's dress shirt and necktie pairing detail",
+  },
+  performance: {
+    primary: imageUrl("photo-1549476464-37392f717541", 2200, 92),
+    primaryAlt: "Male athlete training in black gym apparel",
+    secondary: imageUrl("photo-1517838277536-f5f99be501cd", 1400, 90),
+    secondaryAlt: "Men's performance training detail with athletic footwear and gym equipment",
+  },
+  footwear: {
+    primary: imageUrl("photo-1614252235316-8c857d38b5f4", 2200, 92),
+    primaryAlt: "Pair of men's brown leather formal dress shoes",
+    secondary: imageUrl("photo-1614252235316-8c857d38b5f4", 1400, 90),
+    secondaryAlt: "Close view of men's polished leather dress shoes",
+  },
+  accessories: {
+    primary: imageUrl("photo-1523170335258-f5ed11844a49", 2200, 92),
+    primaryAlt: "Masculine steel and leather wristwatch detail",
+    secondary: imageUrl("photo-1624222247344-550fb60583dc", 1400, 90),
+    secondaryAlt: "Men's leather dress belt and buckle detail",
+    carry: imageUrl("photo-1548036328-c9fa89d128fa", 1400, 90),
+    carryAlt: "Structured gender-neutral leather backpack for business carry",
+  },
+} as const;
 
 export const departmentConfig: DepartmentConfig[] = [
   {
     key: "tailoring",
-    label: "Tailoring & Suits",
+    label: "Tailoring & Suiting",
     href: "/tailoring",
-    eyebrow: "THE PERMANENT TAILORING SYSTEM",
+    eyebrow: "STRUCTURE / FORMAL / MADE TO ORDER",
     title: "Tailoring built around the Athletic Fit standard.",
-    intro: "Made-to-order suits, standalone blazers and tailored trousers developed around broad shoulders, stronger chests and clean tapered waists.",
-    hero: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=2200&q=92",
+    intro: "Full suits, blazers, tuxedos, tailored trousers and overcoats developed around broad shoulders, stronger chests and clean tapered waists.",
+    hero: verifiedMenswearAssets.tailoring.primary,
+    heroAlt: verifiedMenswearAssets.tailoring.primaryAlt,
+    visualTarget: "menswear",
     tone: "warm",
     columns: [
       { title: "Tailoring", links: [
         { label: "Full Suits", href: "/tailoring/suits" },
         { label: "Blazers", href: "/tailoring/blazers" },
+        { label: "Tuxedos", href: "/tailoring/tuxedos" },
         { label: "Tailored Trousers", href: "/tailoring/trousers" },
+        { label: "Overcoats", href: "/tailoring/overcoats" },
       ]},
       { title: "Fit Studio", links: [
         { label: "Measurement Studio", href: "/made-to-order" },
-        { label: "Fit Guide", href: "/fit-guide" },
         { label: "Athletic Fit Standard", href: "/athletic-fit-standard" },
       ]},
     ],
-    featured: { label: "CUSTOM FITTING", title: "Build your made-to-order profile", href: "/made-to-order", image: "https://images.unsplash.com/photo-1617137968427-85924c800a22?auto=format&fit=crop&w=1000&q=88" },
+    featured: {
+      label: "CUSTOM FITTING",
+      title: "Build your made-to-order profile",
+      href: "/made-to-order",
+      image: verifiedMenswearAssets.tailoring.secondary,
+      alt: verifiedMenswearAssets.tailoring.secondaryAlt,
+    },
   },
   {
     key: "shirting",
-    label: "Shirts, Tops & Neckwear",
+    label: "Shirting & Tops",
     href: "/shirting",
-    eyebrow: "SHIRTING / COTTON / NECKWEAR",
-    title: "The chest-up wardrobe, edited as one system.",
-    intro: "Solid dress shirts, restrained microchecks, premium neutral tees and a permanent ten-tie edit designed to work directly with the tailoring palette.",
-    hero: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=2200&q=92",
+    eyebrow: "SHIRTS / KNITS / NECKWEAR",
+    title: "Upper-body essentials, edited as one system.",
+    intro: "Men's dress shirts, microchecks, casual knits, heavyweight tees and a restrained neckwear edit built to work with the tailoring palette.",
+    hero: verifiedMenswearAssets.shirting.primary,
+    heroAlt: verifiedMenswearAssets.shirting.primaryAlt,
+    visualTarget: "menswear",
     tone: "warm",
     columns: [
-      { title: "Shirting", links: [
+      { title: "Shirting & Tops", links: [
         { label: "Dress Shirts", href: "/shirting/dress-shirts" },
-        { label: "Office Microchecks", href: "/shirting/casual-checks" },
-        { label: "Essential Cotton Tees", href: "/shirting/tees" },
+        { label: "Microchecks", href: "/shirting/casual-checks" },
+        { label: "Casual Knits", href: "/shirting/knits" },
+        { label: "Heavyweight Tees", href: "/shirting/tees" },
       ]},
       { title: "Neckwear", links: [
-        { label: "Classic Ties Edit", href: "/shirting/ties" },
-        { label: "Pairing Guide", href: "/capsule-builder" },
+        { label: "Silk Ties", href: "/shirting/ties" },
+        { label: "Bowties", href: "/shirting/bowties" },
+        { label: "Pocket Squares", href: "/shirting/pocket-squares" },
       ]},
     ],
-    featured: { label: "THE PERMANENT 10", title: "Ties + dress shirt pairing guide", href: "/capsule-builder", image: "https://images.unsplash.com/photo-1589756823695-278bc923f962?auto=format&fit=crop&w=1000&q=88" },
+    featured: {
+      label: "THE PERMANENT 10",
+      title: "Ten designer ties. One decision.",
+      href: "/products/permanent-ten-bundle",
+      image: verifiedMenswearAssets.neckwear.primary,
+      alt: verifiedMenswearAssets.neckwear.primaryAlt,
+    },
   },
   {
     key: "performance",
     label: "Performance & Athletic",
     href: "/performance",
-    eyebrow: "TECHNICAL / TRAINING / EVERYDAY",
-    title: "Performance clothing without contaminating the tailoring language.",
-    intro: "Technical tees, tapered gym pants, swishy joggers, running shorts and daily undergarments built as a distinct performance line inside the Jentlemens house.",
-    hero: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?auto=format&fit=crop&w=2200&q=92",
+    eyebrow: "TECHNICAL / TRAINING / BASE LAYER",
+    title: "Technical menswear with its own clear material language.",
+    intro: "Men's technical tops, tapered performance pants, running shorts and base layers separated visually and materially from the tailoring collection.",
+    hero: verifiedMenswearAssets.performance.primary,
+    heroAlt: verifiedMenswearAssets.performance.primaryAlt,
+    visualTarget: "menswear",
     tone: "clean",
     columns: [
       { title: "Training", links: [
         { label: "Technical Tops", href: "/performance/tops" },
-        { label: "Tapered Gym Pants", href: "/performance/pants" },
+        { label: "Tapered Performance Pants", href: "/performance/pants" },
         { label: "Running Shorts", href: "/performance/shorts" },
       ]},
       { title: "Base Layer", links: [
+        { label: "Performance Base Layers", href: "/performance/base-layers" },
         { label: "Underwear", href: "/performance/underwear" },
-        { label: "Daily Socks", href: "/performance/socks" },
       ]},
     ],
-    featured: { label: "ATHLETIC FIT TRAINING", title: "Training and everyday staples", href: "/performance", image: "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?auto=format&fit=crop&w=1000&q=88" },
+    featured: {
+      label: "ATHLETIC FIT TRAINING",
+      title: "Performance clothing shown only on male frames",
+      href: "/performance",
+      image: verifiedMenswearAssets.performance.secondary,
+      alt: verifiedMenswearAssets.performance.secondaryAlt,
+    },
   },
   {
     key: "footwear",
-    label: "Footwear & Leather",
+    label: "Footwear",
     href: "/footwear",
-    eyebrow: "SHOES / TRAINERS / BELTS",
-    title: "Leather finishes that work together instead of fighting each other.",
-    intro: "Formal Oxfords, wingtips and monks sit beside a tightly edited trainer rotation and black or brown dress belts.",
-    hero: "https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=2200&q=92",
+    eyebrow: "OXFORDS / LOAFERS / BOOTS / TRAINERS",
+    title: "Everything that goes on the feet. Nothing else.",
+    intro: "Men's formal Oxfords, loafers, monk straps, minimalist dress sneakers and boots. Belts now live where shoppers expect them: Accessories & Hardware.",
+    hero: verifiedMenswearAssets.footwear.primary,
+    heroAlt: verifiedMenswearAssets.footwear.primaryAlt,
+    visualTarget: "menswear",
     tone: "warm",
     columns: [
-      { title: "Footwear", links: [
-        { label: "Dress Shoes", href: "/footwear/dress-shoes" },
-        { label: "Minimalist Trainers", href: "/footwear/trainers" },
+      { title: "Formal Footwear", links: [
+        { label: "Oxfords", href: "/footwear/oxfords" },
+        { label: "Loafers", href: "/footwear/loafers" },
+        { label: "Monk Straps", href: "/footwear/monk-straps" },
       ]},
-      { title: "Leather Belts", links: [
-        { label: "Black Leather Belts", href: "/footwear/belts-black" },
-        { label: "Brown Leather Belts", href: "/footwear/belts-brown" },
+      { title: "Everyday Footwear", links: [
+        { label: "Minimalist Trainers", href: "/footwear/trainers" },
+        { label: "Boots", href: "/footwear/boots" },
       ]},
     ],
-    featured: { label: "HAND-FINISHED LEATHERWARE", title: "Match your leather correctly", href: "/footwear/dress-shoes", image: "https://images.unsplash.com/photo-1614251056216-f748f76cd228?auto=format&fit=crop&w=1000&q=88" },
+    featured: {
+      label: "MEN'S FORMAL FOOTWEAR",
+      title: "Polished leather without navigation clutter",
+      href: "/footwear/oxfords",
+      image: verifiedMenswearAssets.footwear.secondary,
+      alt: verifiedMenswearAssets.footwear.secondaryAlt,
+    },
   },
   {
     key: "accessories",
-    label: "Accessories & Time",
+    label: "Accessories & Hardware",
     href: "/accessories",
-    eyebrow: "LEATHER GOODS / METAL / TIME",
-    title: "Hardware with weight, purpose and restraint.",
-    intro: "Leather briefcases and carry goods, solid silver and steel jewelry, heavy brass accents and masculine timepieces—no precious-metal theater.",
-    hero: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=2200&q=92",
+    eyebrow: "LEATHER / CARRY / STEEL / TIME",
+    title: "Leather accents and daily hardware, organized where they belong.",
+    intro: "Men's leather belts, wallets and cardholders sit with business carry, steel or sterling hardware, cufflinks and masculine timepieces.",
+    hero: verifiedMenswearAssets.accessories.primary,
+    heroAlt: verifiedMenswearAssets.accessories.primaryAlt,
+    visualTarget: "menswear",
     tone: "warm",
     columns: [
-      { title: "Carry", links: [
-        { label: "Briefcases, Backpacks & Slings", href: "/accessories/leather-bags" },
+      { title: "Leather & Carry", links: [
+        { label: "Leather Belts", href: "/accessories/belts" },
+        { label: "Wallets", href: "/accessories/wallets" },
+        { label: "Cardholders", href: "/accessories/cardholders" },
+        { label: "Briefcases & Bags", href: "/accessories/leather-bags" },
       ]},
-      { title: "Hardware", links: [
+      { title: "Hardware & Time", links: [
         { label: "Steel & Silver Jewelry", href: "/accessories/jewelry" },
-        { label: "Timepieces & Watches", href: "/accessories/watches" },
+        { label: "Cufflinks", href: "/accessories/cufflinks" },
+        { label: "Timepieces", href: "/accessories/watches" },
       ]},
     ],
-    featured: { label: "HEAVY METAL + LEATHER", title: "The hardware edit", href: "/accessories/jewelry", image: "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=1000&q=88" },
+    featured: {
+      label: "BELTS / LEATHER / HARDWARE",
+      title: "The accessory department now owns the leather accents",
+      href: "/accessories/belts",
+      image: verifiedMenswearAssets.accessories.secondary,
+      alt: verifiedMenswearAssets.accessories.secondaryAlt,
+    },
   },
 ];
 
-const img = (id: string) => `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1400&q=88`;
-
+/**
+ * Planned catalog references only. These are not automatically offered for sale.
+ * Product imagery stays intentionally conservative until real Jentlemens product
+ * photography is available; no placeholder women, handbags, or category swaps.
+ */
 export const storeProducts: StoreProduct[] = [
-  { slug:"permanent-five-suit", name:"Permanent Five Made-to-Order Suit", department:"tailoring", collection:"suits", price:850, colors:["Taupe Brown","Light Grey","Dark Charcoal Grey","Navy","Black"], sizes:["Custom"], fabric:"Super 120s wool", fit:"Athletic Fit", badges:["Tailored Wool"], image:img("photo-1507679799987-c73779587ccf"), hoverImage:img("photo-1594938298603-c8148c4dae35"), description:"Half-canvas two-piece tailoring cut around the Jentlemens Athletic Fit standard." },
-  { slug:"athletic-fit-blazer", name:"Athletic Fit Blazer", department:"tailoring", collection:"blazers", price:425, colors:["Navy","Dark Charcoal Grey","Taupe Brown"], sizes:["36","38","40","42","44","46"], fabric:"Wool twill", fit:"Athletic Fit", badges:["Tailored Wool"], image:img("photo-1555069519-127aadedf1ee"), hoverImage:img("photo-1617137968427-85924c800a22"), description:"A standalone tailored jacket with room through the upper torso and a disciplined waist." },
-  { slug:"tailored-trouser", name:"Tailored Trouser", department:"tailoring", collection:"trousers", price:165, colors:["Taupe Brown","Light Grey","Dark Charcoal Grey","Navy","Black"], sizes:["30","32","34","36","38","40"], fabric:"Wool twill", fit:"Athletic Taper", badges:["Tailored Wool"], image:img("photo-1598808503746-f34c53b9323e"), hoverImage:img("photo-1506629082955-511b1aa562c8"), description:"Room through the seat and thigh with a clean line below the knee." },
-  { slug:"solid-dress-shirt", name:"Permanent Solid Dress Shirt", department:"shirting", collection:"dress-shirts", price:68, colors:["White","Black","Light Blue"], sizes:["S","M","L","XL","XXL"], fabric:"Long-staple cotton", fit:"Athletic Fit", badges:["Pure Cotton"], image:img("photo-1602810318383-e386cc2a3ccf"), hoverImage:img("photo-1598033129183-c4f50c736f10"), description:"A clean office shirt with chest and shoulder room without excess fabric at the waist." },
-  { slug:"microcheck-shirt", name:"Office Microcheck Shirt", department:"shirting", collection:"casual-checks", price:74, colors:["Blue Microcheck","Grey Microcheck","Navy Plaid"], sizes:["S","M","L","XL","XXL"], fabric:"Cotton poplin", fit:"Athletic Fit", badges:["Pure Cotton"], image:img("photo-1596755389378-c31d21fd1273"), hoverImage:img("photo-1603252109303-2751441dd157"), description:"The controlled pattern edit: small checks and plaids that still work inside the permanent system." },
-  { slug:"essential-tee", name:"Essential Cotton Tee", department:"shirting", collection:"tees", price:52, colors:["White","Black","Grey","Navy"], sizes:["S","M","L","XL","XXL"], fabric:"Heavyweight cotton jersey", fit:"Athletic Fit", badges:["Pure Cotton"], image:img("photo-1521572163474-6864f9cf17ab"), hoverImage:img("photo-1583743814966-8936f37f4ec7"), description:"Premium neutral cotton tee built to sit correctly across the shoulders and upper arms." },
-  { slug:"permanent-ten-tie", name:"Permanent 10 Tie Edit", department:"shirting", collection:"ties", price:58, colors:["Navy","Charcoal","Black","Burgundy","Taupe","Stripe","Micro-plaid"], sizes:["One Size"], fabric:"Silk twill", fit:"Classic 8cm", badges:[], image:img("photo-1589756823695-278bc923f962"), hoverImage:img("photo-1598032895397-b9472444bf93"), description:"Ten controlled solids, stripes and micro-patterns selected to pair with the permanent shirts and suits." },
-  { slug:"technical-training-tee", name:"Technical Training Tee", department:"performance", collection:"tops", price:54, colors:["White","Black","Grey","Navy"], sizes:["S","M","L","XL","XXL"], fabric:"Polyester technical knit", fit:"Athletic", badges:["4-Way Stretch","Moisture-Wicking"], image:img("photo-1538805060514-97d9cc17730c"), hoverImage:img("photo-1517836357463-d25dfeac3438"), description:"Moisture-wicking training top cut close through the waist without restricting the chest or back." },
-  { slug:"tapered-gym-pant", name:"Tapered Gym Pant", department:"performance", collection:"pants", price:105, colors:["Black","Grey","Navy"], sizes:["S","M","L","XL","XXL"], fabric:"Stretch woven poly-blend", fit:"Athletic Taper", badges:["4-Way Stretch","Moisture-Wicking"], image:img("photo-1552674605-db6ffd4facb5"), hoverImage:img("photo-1517838277536-f5f99be501cd"), description:"Technical trousers for training, travel and everyday wear with a clean tapered leg." },
-  { slug:"running-short", name:"Running Short", department:"performance", collection:"shorts", price:72, colors:["Black","Grey","Navy"], sizes:["S","M","L","XL"], fabric:"Lightweight technical shell", fit:"Athletic", badges:["4-Way Stretch","Moisture-Wicking"], image:img("photo-1546483875-ad9014c88eba"), hoverImage:img("photo-1517963879433-6ad2b056d712"), description:"Minimal running short with enough structure to work beyond the track." },
-  { slug:"boxer-brief", name:"Performance Boxer Brief", department:"performance", collection:"underwear", price:48, colors:["White","Black","Grey","Navy"], sizes:["S","M","L","XL","XXL"], fabric:"Stretch moisture-control knit", fit:"Supportive", badges:["4-Way Stretch","Moisture-Wicking"], image:img("photo-1566206091558-7f218b696731"), hoverImage:img("photo-1618354691373-d851c5c3a990"), description:"Neutral daily base layer using stretch and moisture-control fabric." },
-  { slug:"daily-sock-set", name:"Daily Sock Set", department:"performance", collection:"socks", price:38, colors:["White","Black","Grey","Navy"], sizes:["M","L"], fabric:"Cotton-performance blend", fit:"Daily", badges:["Moisture-Wicking"], image:img("photo-1586350977771-b3b0abd50c82"), hoverImage:img("photo-1582966772680-860e372bb558"), description:"A restrained four-color sock system for dress, travel and daily wear." },
-  { slug:"cap-toe-oxford", name:"Cap-Toe Oxford", department:"footwear", collection:"dress-shoes", price:235, colors:["Black","Dark Brown"], sizes:["8","9","10","11","12","13"], fabric:"Full-grain leather", fit:"Standard", badges:["Leathercraft"], image:img("photo-1614252235316-8c857d38b5f4"), hoverImage:img("photo-1614251056216-f748f76cd228"), description:"Formal full-grain leather Oxford built around a clean cap toe and restrained finish." },
-  { slug:"wingtip-derby", name:"Wingtip Derby", department:"footwear", collection:"dress-shoes", price:245, colors:["Black","Brown"], sizes:["8","9","10","11","12","13"], fabric:"Full-grain leather", fit:"Standard", badges:["Leathercraft"], image:img("photo-1614252369475-531eba835eb1"), hoverImage:img("photo-1614252235316-8c857d38b5f4"), description:"Classic brogue detailing without excessive ornament." },
-  { slug:"minimal-trainer", name:"Minimalist Trainer", department:"footwear", collection:"trainers", price:148, colors:["Black","White","Stone","Navy"], sizes:["8","9","10","11","12","13"], fabric:"Leather and technical mesh", fit:"Standard", badges:["Leathercraft"], image:img("photo-1608231387042-66d1773070a5"), hoverImage:img("photo-1542291026-7eec264c27ff"), description:"One of a small seasonal trainer rotation chosen for understated form and everyday wear." },
-  { slug:"black-dress-belt", name:"Black Dress Belt", department:"footwear", collection:"belts-black", price:72, colors:["Black"], sizes:["30","32","34","36","38","40","42"], fabric:"Full-grain leather", fit:"30mm", badges:["Leathercraft"], image:img("photo-1553062407-98eeb64c6a62"), hoverImage:img("photo-1624222247344-550fb60583dc"), description:"A narrow black dress belt made to pair with black formal footwear." },
-  { slug:"brown-dress-belt", name:"Brown Dress Belt", department:"footwear", collection:"belts-brown", price:72, colors:["Dark Brown"], sizes:["30","32","34","36","38","40","42"], fabric:"Full-grain leather", fit:"30mm", badges:["Leathercraft"], image:img("photo-1553062407-98eeb64c6a62"), hoverImage:img("photo-1624222247344-550fb60583dc"), description:"A dark brown dress belt calibrated to the brown shoe family." },
-  { slug:"leather-briefcase", name:"Structured Leather Briefcase", department:"accessories", collection:"leather-bags", price:390, colors:["Black","Dark Brown"], sizes:["One Size"], fabric:"Full-grain leather", fit:"15-inch laptop", badges:["Leathercraft"], image:img("photo-1553062407-98eeb64c6a62"), hoverImage:img("photo-1548036328-c9fa89d128fa"), description:"Work-focused carry with a restrained silhouette, solid hardware and room for a modern office loadout." },
-  { slug:"leather-backpack", name:"Leather Backpack", department:"accessories", collection:"leather-bags", price:345, colors:["Black","Dark Brown"], sizes:["One Size"], fabric:"Full-grain leather", fit:"Daily carry", badges:["Leathercraft"], image:img("photo-1553062407-98eeb64c6a62"), hoverImage:img("photo-1622560480605-d83c853bc5c3"), description:"A cleaner alternative to technical nylon for office and travel use." },
-  { slug:"sterling-band", name:"Heavy Sterling Band", department:"accessories", collection:"jewelry", price:165, colors:["Sterling Silver"], sizes:["8","9","10","11","12"], fabric:"Solid 925 sterling silver", fit:"Heavy profile", badges:["Heavy Silver"], image:img("photo-1605100804763-247f67b3557e"), hoverImage:img("photo-1599643478518-a784e5dc4c8f"), description:"Solid sterling with visible material weight and no decorative plating." },
-  { slug:"steel-cuff", name:"Solid Steel Cuff", department:"accessories", collection:"jewelry", price:118, colors:["Brushed Steel"], sizes:["M","L"], fabric:"Stainless steel", fit:"Heavy cuff", badges:["Solid Steel"], image:img("photo-1611652022419-a9419f74343d"), hoverImage:img("photo-1535632066927-ab7c9ab60908"), description:"A weighty brushed steel cuff designed as hardware rather than ornament." },
-  { slug:"dress-timepiece", name:"Minimal Dress Timepiece", department:"accessories", collection:"watches", price:285, colors:["Steel / Black","Steel / Brown"], sizes:["40mm"], fabric:"Stainless steel / leather", fit:"40mm case", badges:["Solid Steel","Leathercraft"], image:img("photo-1523170335258-f5ed11844a49"), hoverImage:img("photo-1524805444758-089113d48a6d"), description:"Clean dial, steel case and leather strap without oversized branding." },
-  { slug:"sport-timepiece", name:"Steel Sport Timepiece", department:"accessories", collection:"watches", price:325, colors:["Brushed Steel","Black Steel"], sizes:["42mm"], fabric:"Stainless steel", fit:"42mm case", badges:["Solid Steel"], image:img("photo-1547996160-81dfa63595aa"), hoverImage:img("photo-1522312346375-d1a52e2b99b3"), description:"A more technical steel watch for travel and everyday wear while preserving the same restrained design language." },
+  defineMenswearProduct({
+    id: "tailoring-permanent-five-suit",
+    slug: "permanent-five-suit",
+    name: "Permanent Five Made-to-Order Suit",
+    department: "tailoring",
+    genderTarget: "menswear",
+    collection: "suits",
+    price: 850,
+    colors: ["Taupe Brown", "Light Grey", "Dark Charcoal Grey", "Navy", "Black"],
+    sizes: ["Custom"],
+    fabric: "Super 120s wool",
+    fit: "Athletic Fit",
+    badges: ["Tailored Wool"],
+    image: verifiedMenswearAssets.tailoring.primary,
+    alt: "Male model wearing a men's tailored suit with structured jacket and trousers",
+    hoverImage: verifiedMenswearAssets.tailoring.secondary,
+    hoverAlt: "Male model showing the full men's tailored suit silhouette",
+    description: "Half-canvas two-piece tailoring cut around the Jentlemens Athletic Fit standard.",
+  }),
+  defineMenswearProduct({
+    id: "shirting-permanent-dress-shirt",
+    slug: "solid-dress-shirt",
+    name: "Permanent Solid Dress Shirt",
+    department: "shirting",
+    genderTarget: "menswear",
+    collection: "dress-shirts",
+    price: 68,
+    colors: ["White", "Black", "Light Blue"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    fabric: "Long-staple cotton",
+    fit: "Athletic Fit",
+    badges: ["Pure Cotton"],
+    image: verifiedMenswearAssets.shirting.primary,
+    alt: "Folded men's dress shirts in a refined business shirting assortment",
+    hoverImage: verifiedMenswearAssets.shirting.secondary,
+    hoverAlt: "Men's dress shirt styled with a necktie for formal business wear",
+    description: "A clean men's office shirt with chest and shoulder room without excess fabric at the waist.",
+  }),
+  defineMenswearProduct({
+    id: "performance-training-system",
+    slug: "performance-training-system",
+    name: "Performance Training System",
+    department: "performance",
+    genderTarget: "menswear",
+    collection: "tops",
+    price: 0,
+    colors: ["Black", "Grey", "Navy"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    fabric: "Technical performance knit",
+    fit: "Athletic",
+    badges: ["4-Way Stretch", "Moisture-Wicking"],
+    image: verifiedMenswearAssets.performance.primary,
+    alt: "Male athlete wearing men's black gym training apparel",
+    hoverImage: verifiedMenswearAssets.performance.secondary,
+    hoverAlt: "Men's performance training detail during a gym workout",
+    description: "Visual reference for the future men's technical performance line; not active inventory.",
+  }),
+  defineMenswearProduct({
+    id: "footwear-cap-toe-oxford",
+    slug: "cap-toe-oxford",
+    name: "Cap-Toe Oxford",
+    department: "footwear",
+    genderTarget: "menswear",
+    collection: "oxfords",
+    price: 235,
+    colors: ["Black", "Dark Brown"],
+    sizes: ["8", "9", "10", "11", "12", "13"],
+    fabric: "Full-grain leather",
+    fit: "Standard",
+    badges: ["Leathercraft"],
+    image: verifiedMenswearAssets.footwear.primary,
+    alt: "Pair of men's polished brown leather Oxford dress shoes",
+    hoverImage: verifiedMenswearAssets.footwear.secondary,
+    hoverAlt: "Close view of men's formal leather Oxford shoes",
+    description: "Formal men's leather footwear built around a clean cap toe and restrained finish.",
+  }),
+  defineMenswearProduct({
+    id: "accessories-leather-dress-belt",
+    slug: "classic-leather-dress-belt",
+    name: "Classic Leather Dress Belt",
+    department: "accessories",
+    genderTarget: "menswear",
+    collection: "belts",
+    price: 72,
+    colors: ["Black", "Dark Brown"],
+    sizes: ["30", "32", "34", "36", "38", "40", "42"],
+    fabric: "Full-grain leather",
+    fit: "30mm",
+    badges: ["Leathercraft"],
+    image: verifiedMenswearAssets.accessories.secondary,
+    alt: "Men's full-grain leather dress belt with polished buckle",
+    hoverImage: verifiedMenswearAssets.accessories.secondary,
+    hoverAlt: "Close detail of a men's leather dress belt and buckle",
+    description: "A narrow men's dress belt positioned under Accessories & Hardware, with black and brown variants planned.",
+  }),
+  defineMenswearProduct({
+    id: "accessories-leather-backpack",
+    slug: "structured-leather-backpack",
+    name: "Structured Leather Backpack",
+    department: "accessories",
+    genderTarget: "menswear",
+    collection: "leather-bags",
+    price: 345,
+    colors: ["Black", "Dark Brown"],
+    sizes: ["One Size"],
+    fabric: "Full-grain leather",
+    fit: "Business carry",
+    badges: ["Leathercraft"],
+    image: verifiedMenswearAssets.accessories.carry,
+    alt: "Structured gender-neutral leather backpack suitable for men's business carry",
+    hoverImage: verifiedMenswearAssets.accessories.carry,
+    hoverAlt: "Leather backpack shown as structured business carry hardware",
+    description: "Structured business carry without handbag styling or unrelated lifestyle imagery.",
+  }),
+  defineMenswearProduct({
+    id: "accessories-dress-timepiece",
+    slug: "minimal-dress-timepiece",
+    name: "Minimal Dress Timepiece",
+    department: "accessories",
+    genderTarget: "menswear",
+    collection: "watches",
+    price: 285,
+    colors: ["Steel / Black", "Steel / Brown"],
+    sizes: ["40mm"],
+    fabric: "Stainless steel / leather",
+    fit: "40mm case",
+    badges: ["Solid Steel", "Leathercraft"],
+    image: verifiedMenswearAssets.accessories.primary,
+    alt: "Masculine steel and leather men's dress watch",
+    hoverImage: verifiedMenswearAssets.accessories.primary,
+    hoverAlt: "Close view of a masculine steel men's timepiece",
+    description: "A restrained steel-and-leather timepiece reference for the future hardware collection.",
+  }),
 ];
 
 export function getDepartment(key: string) {
