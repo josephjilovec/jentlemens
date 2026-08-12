@@ -25,14 +25,14 @@ export function V2DepartmentPage({ department, products, collectionTitle }: { de
   const isFutureCollection = products.length === 0;
 
   return <main className={`v2Department tone-${department.tone}`}>
-    <section className="v2DepartmentHero" style={{backgroundImage:`linear-gradient(90deg,rgba(8,8,8,.72),rgba(8,8,8,.12)),url('${department.hero}')`}}>
+    <section className="v2DepartmentHero" role="img" aria-label={department.heroAlt} style={{backgroundImage:`linear-gradient(90deg,rgba(8,8,8,.72),rgba(8,8,8,.12)),url('${department.hero}')`}}>
       <div className="v2HeroCopy"><p>{department.eyebrow}</p><h1>{collectionTitle || department.title}</h1><div className="v2Rule"/><span>{department.intro}</span></div>
     </section>
 
     {isFutureCollection ? <section className="v2Manifesto">
       <p>COLLECTION IN DEVELOPMENT</p>
       <h2>No placeholder products. No mismatched stock photography.</h2>
-      <span>This category remains part of the Jentlemens house architecture, but it is not currently offered for sale. Products will appear here only when the inventory, pricing and product photography are ready.</span>
+      <span>This category remains part of the Jentlemens house architecture, but it is not currently offered for sale. Products will appear here only when the inventory, pricing and verified menswear photography are ready.</span>
       <Link href="/products/permanent-ten-bundle">Shop the current Permanent 10 offer →</Link>
     </section> : <section className="v2CollectionShell">
       <aside className="v2FilterRail">
@@ -47,9 +47,9 @@ export function V2DepartmentPage({ department, products, collectionTitle }: { de
       <div className="v2CollectionMain">
         <div className="v2CollectionTop"><span>{shown.length} offer{shown.length===1?"":"s"}</span><Link href="/products/permanent-ten-bundle">Current featured offer →</Link></div>
         <div className="v2ProductGrid">
-          {shown.map((product,index)=><article className="v2ProductCard" key={product.slug}>
+          {shown.map((product,index)=><article className="v2ProductCard" key={product.id}>
             <Link href={`/products/${product.slug}`} className="v2ProductVisual">
-              <img src={product.image} alt={product.name}/><img className="v2HoverImage" src={product.hoverImage} alt={`${product.name} alternate view`}/>
+              <img src={product.image} alt={product.alt}/><img className="v2HoverImage" src={product.hoverImage} alt={product.hoverAlt}/>
               {index===0 && <span className="v2HouseBadge">FEATURED OFFER</span>}
             </Link>
             <div className="v2ProductMeta">
