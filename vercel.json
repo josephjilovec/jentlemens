@@ -1,1 +1,10 @@
-{"framework":"nextjs","buildCommand":"npm run build"}
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "git": {
+    "deploymentEnabled": {
+      "jentlemens-v3-build": false
+    }
+  }
+}
