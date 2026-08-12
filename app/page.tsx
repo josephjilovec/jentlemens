@@ -1,23 +1,24 @@
 import Link from "next/link";
+import { CapsuleBuilder } from "@/components/CapsuleBuilder";
+import { departmentConfig, suitPalette } from "@/lib/site-config";
 
-const departments = [
-  {name:"Suits",href:"/suits",copy:"Made-to-order Athletic Fit tailoring in five permanent neutral colors.",img:"https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1400&q=85"},
-  {name:"Shirts",href:"/shirts",copy:"Permanent office solids plus a very small rotating pattern edit.",img:"https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=1400&q=85"},
-  {name:"Trousers",href:"/trousers",copy:"The same tailoring palette, available as versatile separates.",img:"https://images.unsplash.com/photo-1598808503746-f34c53b9323e?auto=format&fit=crop&w=1400&q=85"},
-  {name:"Shoes",href:"/shoes",copy:"Black and brown dress shoes. One light and one dark seasonal trainer.",img:"https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=1400&q=85"},
-  {name:"Accessories",href:"/accessories",copy:"Belts, socks and a tie edit designed to finish the system without clutter.",img:"https://images.unsplash.com/photo-1589756823695-278bc923f962?auto=format&fit=crop&w=1400&q=85"}
-];
+export default function Home(){
+  return <main className="v2Home">
+    <section className="v2HomeHero">
+      <div className="v2HomeShade"/>
+      <div className="v2HomeHeroCopy"><p>JENTLEMENS / THE DISCIPLINED MEN'S WARDROBE</p><h1>Built to fit.<br/>Built to combine.</h1><span>Premium menswear organized around Athletic Fit proportions, a permanent neutral tailoring palette and clear separation between natural tailoring fabrics and technical performance clothing.</span><div><Link href="/tailoring">Shop Tailoring</Link><Link className="ghost" href="/made-to-order">Open Fit Studio</Link></div></div>
+    </section>
 
-export default function HomePage(){return <main>
-  <section className="hero" id="top"><div className="heroShade"/><div className="heroCopy"><p>THE PERMANENT MEN'S WARDROBE</p><h1>Built to fit.<br/>Built to combine.</h1><div className="rule"/><p className="lede">Jentlemens is a focused menswear system built around one house fit: <strong>Athletic Fit</strong> — cleaner than classic, easier than slim.</p><div className="actions"><Link href="/new">Shop the current edit</Link><Link href="/made-to-order" className="outlineCta">Build a made-to-order suit</Link></div></div></section>
+    <section className="v2Manifesto"><p>THE HOUSE SYSTEM</p><h2>Five departments. One disciplined wardrobe.</h2><span>Tailoring, shirting, performance, leather and hardware each keep their own material identity while sharing the same restrained design language.</span></section>
 
-  <section className="homeIntro"><p className="eyebrow">THE JENTLEMENS SYSTEM</p><h2>A real store, organized by department.</h2><p>Instead of burying every category inside one long landing page, the collection is now structured like a focused menswear house. Each department has its own product edit, fit logic and styling context.</p></section>
+    <section className="v2DepartmentGrid">{departmentConfig.map((dept,index)=><Link key={dept.key} href={dept.href} className={`v2DeptCard card-${index+1}`}><div style={{backgroundImage:`linear-gradient(0deg,rgba(0,0,0,.58),rgba(0,0,0,.03)),url('${dept.hero}')`}}/><span>0{index+1}</span><h2>{dept.label}</h2><p>{dept.intro}</p><b>Enter department →</b></Link>)}</section>
 
-  <section className="departmentCards">{departments.map((item)=><Link href={item.href} className="departmentCard" key={item.name}><div className="departmentImage" style={{backgroundImage:`linear-gradient(0deg,rgba(0,0,0,.58),rgba(0,0,0,.05)),url('${item.img}')`}}/><div><span>SHOP DEPARTMENT</span><h2>{item.name}</h2><p>{item.copy}</p><b>Explore {item.name} →</b></div></Link>)}</section>
+    <section className="v2PaletteSection"><div><p>THE PERMANENT FIVE</p><h2>Five suit colors. Dozens of clean combinations.</h2><span>The tailoring palette is intentionally narrow so shirts, ties, footwear and leather can be bought as a system instead of isolated pieces.</span></div><div className="v2PaletteWidget">{suitPalette.map(([name,hex])=><Link href="/capsule-builder" key={name}><i style={{background:hex}}/><b>{name}</b><small>Build combinations →</small></Link>)}</div></section>
 
-  <section className="palette"><p className="eyebrow">PERMANENT TAILORING PALETTE</p><h2>Five suit colors. Almost everything works together.</h2><div className="swatches">{[["Taupe Brown","#8A735D"],["Light Grey","#b8b8b3"],["Charcoal","#444648"],["Navy","#172033"],["Black","#111"]].map(([n,c])=><div key={n}><i style={{background:c}}/><span>{n}</span></div>)}</div></section>
+    <section className="athleticFitPromo"><div className="athleticFitPhoto"/><div><p>THE ATHLETIC FIT STANDARD</p><h2>Room where a stronger frame needs it. Control everywhere else.</h2><span>Broad shoulders, developed chests, larger thighs and tapered waists expose the compromises in generic slim and classic fits. Jentlemens starts with that problem instead of treating it as an alteration afterthought.</span><Link href="/athletic-fit-standard">Understand the cut →</Link></div></section>
 
-  <section className="homeSplit"><div className="homeSplitImage"/><div><p className="eyebrow">THE HOUSE FIT</p><h2>Learn your Jentlemens fit once.</h2><p>Athletic Fit sits between traditional classic and slim. The goal is consistency across tailoring, shirts and trousers—not a different silhouette every season.</p><Link className="darkCta" href="/fit-guide">Read the Fit Guide →</Link></div></section>
+    <CapsuleBuilder/>
 
-  <section className="homeMto"><div><p className="eyebrow">MADE TO ORDER</p><h2>Your measurements become the suit.</h2><p>Submit the core body and garment measurements required for production, review your fit notes, and build a suit specification around your actual proportions.</p><Link href="/made-to-order">Open Measurement Studio →</Link></div></section>
- </main>}
+    <section className="fitStudioPromo"><div><p>MEASUREMENT PROFILE</p><h2>Measure once. Save the profile. Use it again.</h2><span>The made-to-order studio stores your core measurement profile locally on your device so repeat tailoring orders can begin with the same fit data.</span><Link href="/made-to-order">Build measurement profile →</Link></div><div className="fitDiagram"><i/><i/><i/><span>CHEST</span><span>WAIST</span><span>INSEAM</span></div></section>
+  </main>
+}
