@@ -1,3 +1,5 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function FitGuidePage(){return <main><section className="departmentHero fitHero"><div><p className="eyebrow">THE HOUSE FIT</p><h1>Athletic Fit.</h1><p>Slightly trimmer than Classic Fit. Deliberately easier than Slim Fit. Built to create one repeatable fit language across the Jentlemens wardrobe.</p></div></section><section className="fitGuidePage"><div className="fitScale"><div><span>CLASSIC</span><i/></div><div className="chosen"><span>ATHLETIC</span><i/></div><div><span>SLIM</span><i/></div><small>Structured shoulder · clean waist · room through seat and thigh</small></div><div className="fitCopy"><p className="eyebrow">HOW IT SHOULD FEEL</p><h2>Clean, not restrictive.</h2><p>Jackets follow the shoulder without excess volume through the waist. Shirts sit closer to the body than a traditional classic cut without pulling across the chest. Trousers preserve room through the seat and thigh, then taper cleanly below the knee.</p><div className="sizeTable"><span>SHIRTS / KNITS</span><b>S · M · L · XL · 2XL</b><span>SOCKS</span><b>M / L</b><span>BELTS</span><b>32 · 34 · 36 · 38 · 40 · 42 · 44</b></div><Link className="darkCta" href="/made-to-order">Open made-to-order guide →</Link></div></section></main>}
+export default function FitGuidePage(){
+  redirect("/athletic-fit-standard");
+}
