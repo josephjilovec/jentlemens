@@ -1,4 +1,3 @@
-import { DepartmentPage } from "@/components/DepartmentPage";
-import { productsFor } from "@/lib/catalog";
-
-export default function AccessoriesPage(){return <DepartmentPage eyebrow="ACCESSORIES / THE FINISH" title="The small things, kept small." intro="Black and brown belts, a narrow office-sock palette, and a tie assortment capped at ten pieces. The accessories exist to finish the wardrobe—not overwhelm it." image="https://images.unsplash.com/photo-1589756823695-278bc923f962?auto=format&fit=crop&w=2200&q=90" products={productsFor("Accessories")}><section className="storyStrip"><div><span>01</span><h2>Belts</h2><p>Black and brown leather only, sized conventionally and matched to footwear.</p></div><div><span>02</span><h2>Socks</h2><p>Grey, charcoal, navy and black in two practical shoe-size bands.</p></div><div><span>03</span><h2>Ties</h2><p>A permanent edit of no more than ten ties selected to work with the core shirt and suit colors.</p></div></section></DepartmentPage>}
+import { V2DepartmentPage } from "@/components/V2DepartmentPage";
+import { getDepartment, getProductsForDepartment } from "@/lib/site-config";
+export default function AccessoriesPage(){return <V2DepartmentPage department={getDepartment("accessories")!} products={getProductsForDepartment("accessories")}/>}
