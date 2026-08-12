@@ -22,13 +22,19 @@ export function V2DepartmentPage({ department, products, collectionTitle }: { de
   const fabrics = useMemo(()=>["All", ...Array.from(new Set(products.map(p=>p.fabric)))],[products]);
   const fits = useMemo(()=>["All", ...Array.from(new Set(products.map(p=>p.fit)))],[products]);
   const shown = products.filter(p => (color==="All" || p.colors.includes(color)) && (size==="All" || p.sizes.includes(size)) && (fabric==="All" || p.fabric===fabric) && (fit==="All" || p.fit===fit));
+  const isFutureCollection = products.length === 0;
 
   return <main className={`v2Department tone-${department.tone}`}>
     <section className="v2DepartmentHero" style={{backgroundImage:`linear-gradient(90deg,rgba(8,8,8,.72),rgba(8,8,8,.12)),url('${department.hero}')`}}>
       <div className="v2HeroCopy"><p>{department.eyebrow}</p><h1>{collectionTitle || department.title}</h1><div className="v2Rule"/><span>{department.intro}</span></div>
     </section>
 
-    <section className="v2CollectionShell">
+    {isFutureCollection ? <section className="v2Manifesto">
+      <p>COLLECTION IN DEVELOPMENT</p>
+      <h2>No placeholder products. No mismatched stock photography.</h2>
+      <span>This category remains part of the Jentlemens house architecture, but it is not currently offered for sale. Products will appear here only when the inventory, pricing and product photography are ready.</span>
+      <Link href="/products/permanent-ten-bundle">Shop the current Permanent 10 offer →</Link>
+    </section> : <section className="v2CollectionShell">
       <aside className="v2FilterRail">
         <div><p>FILTER THE EDIT</p><h2>{collectionTitle || department.label}</h2></div>
         <label>Color<select value={color} onChange={e=>setColor(e.target.value)}>{colors.map(x=><option key={x}>{x}</option>)}</select></label>
@@ -39,12 +45,12 @@ export function V2DepartmentPage({ department, products, collectionTitle }: { de
       </aside>
 
       <div className="v2CollectionMain">
-        <div className="v2CollectionTop"><span>{shown.length} piece{shown.length===1?"":"s"}</span><Link href="/athletic-fit-standard">The Athletic Fit Standard →</Link></div>
+        <div className="v2CollectionTop"><span>{shown.length} offer{shown.length===1?"":"s"}</span><Link href="/products/permanent-ten-bundle">Current featured offer →</Link></div>
         <div className="v2ProductGrid">
           {shown.map((product,index)=><article className="v2ProductCard" key={product.slug}>
             <Link href={`/products/${product.slug}`} className="v2ProductVisual">
               <img src={product.image} alt={product.name}/><img className="v2HoverImage" src={product.hoverImage} alt={`${product.name} alternate view`}/>
-              {index===0 && <span className="v2HouseBadge">HOUSE EDIT</span>}
+              {index===0 && <span className="v2HouseBadge">FEATURED OFFER</span>}
             </Link>
             <div className="v2ProductMeta">
               <div><Link href={`/products/${product.slug}`}><h3>{product.name}</h3></Link><p>{product.colors.join(" · ")}</p></div><strong>${product.price}</strong>
@@ -52,14 +58,14 @@ export function V2DepartmentPage({ department, products, collectionTitle }: { de
             <div className="v2MaterialBadges">{product.badges.map(b=><span key={b}>{badgeLabel(b)}</span>)}</div>
             <small>{product.description}</small>
           </article>)}
-          {shown.length===0 && <div className="v2Empty"><h3>No pieces match that combination.</h3><p>Reset one or more filters to return to the full edit.</p></div>}
+          {shown.length===0 && <div className="v2Empty"><h3>No offers match that combination.</h3><p>Reset one or more filters to return to the full edit.</p></div>}
         </div>
       </div>
-    </section>
+    </section>}
 
     <section className="v2DepartmentStatement">
-      <div><p>WHY THIS DEPARTMENT EXISTS</p><h2>{department.key==="performance"?"Technical fabric stays visibly separate from tailoring.":department.key==="accessories"?"Leather, steel, silver and timepieces are treated as hardware.":"Every category has a clear job inside the wardrobe system."}</h2></div>
-      <Link href="/capsule-builder">Build a complete capsule →</Link>
+      <div><p>THE CURRENT JENTLEMENS OFFER</p><h2>The Permanent 10 keeps the buying decision simple: ten coordinated ties, one purchase, $500.</h2></div>
+      <Link href="/products/permanent-ten-bundle">View the 10-pack →</Link>
     </section>
   </main>
 }
