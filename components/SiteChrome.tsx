@@ -14,8 +14,8 @@ export function SiteHeader() {
               <div className="v2MegaColumns">
                 {dept.columns.map(column=><div className="v2MegaColumn" key={column.title}><b>{column.title}</b>{column.links.map(link=><Link key={link.href+link.label} href={link.href}>{link.label}</Link>)}</div>)}
               </div>
-              <Link className="v2MegaFeature" href={dept.key==="shirting"?"/products/permanent-ten-bundle":dept.featured.href}>
-                <div style={{backgroundImage:`linear-gradient(0deg,rgba(0,0,0,.45),transparent),url('${dept.key==="shirting"?"https://images.unsplash.com/photo-1589756823695-278bc923f962?auto=format&fit=crop&w=1000&q=88":dept.featured.image}')`}}/>
+              <Link className="v2MegaFeature" href={dept.key==="shirting"?"/products/permanent-ten-bundle":dept.featured.href} aria-label={`${dept.featured.title}. ${dept.featured.alt}`}>
+                <div role="img" aria-label={dept.featured.alt} style={{backgroundImage:`linear-gradient(0deg,rgba(0,0,0,.45),transparent),url('${dept.featured.image}')`}}/>
                 <span>{dept.key==="shirting"?"THE PERMANENT 10":dept.featured.label}</span><strong>{dept.key==="shirting"?"10 ties · one $500 collection":dept.featured.title}</strong><small>Explore →</small>
               </Link>
             </div>
