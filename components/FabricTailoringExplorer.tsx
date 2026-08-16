@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type PointerEvent } from "react";
 import { verifiedMenswearAssets } from "@/lib/site-config";
 
 const fabrics = [
@@ -15,7 +15,7 @@ export function FabricTailoringExplorer(){
   const [position,setPosition]=useState({x:50,y:50});
   const fabric=fabrics[active];
 
-  function move(e:React.PointerEvent<HTMLDivElement>){
+  function move(e:PointerEvent<HTMLDivElement>){
     const r=e.currentTarget.getBoundingClientRect();
     setPosition({x:Math.max(0,Math.min(100,((e.clientX-r.left)/r.width)*100)),y:Math.max(0,Math.min(100,((e.clientY-r.top)/r.height)*100))});
   }
