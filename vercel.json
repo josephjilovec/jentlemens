@@ -4,7 +4,8 @@
   "buildCommand": "npm run build",
   "git": {
     "deploymentEnabled": {
-      "jentlemens-v3-build": false
+      "jentlemens-v3-build": false,
+      "jentlemens-luxury-fit-experience": false
     }
   }
 }

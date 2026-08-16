@@ -1,9 +1,12 @@
+import { FitFinderConfigurator } from "@/components/FitFinderConfigurator";
 import { MeasurementProfileStudio } from "@/components/MeasurementProfileStudio";
 
 export default function MadeToOrderPage(){
-  return <main className="v2MtoPage">
-    <section className="v2MtoHero"><div><p>MADE TO ORDER / FIT STUDIO</p><h1>Measure once. Build from your actual proportions.</h1><span>The Jentlemens fit studio turns six core body measurements and a preferred silhouette into a reusable local measurement profile for future made-to-order visits.</span></div></section>
+  return <main className="v2MtoPage luxuryMto">
+    <section className="v2MtoHero"><div><p>MADE TO ORDER / ATHLETIC FIT</p><h1>Fit starts with proportion, then gets precise.</h1><span>Use the Fit Finder for a fast upper-body profile, then continue into the detailed measurement studio for a reusable local made-to-order profile.</span></div></section>
+    <FitFinderConfigurator/>
+    <section className="mtoDivider"><p>STEP TWO / DETAILED PROFILE</p><h2>Move from frame-level guidance into the full measurement set.</h2></section>
     <section className="v2MtoStudio"><MeasurementProfileStudio/></section>
-    <section className="v2MtoTrust"><div><span>01</span><h3>Local profile saving</h3><p>Your core fit data can be stored in this browser and preloaded the next time you return.</p></div><div><span>02</span><h3>Proportional preview</h3><p>The suit SVG responds to shoulder, chest and waist inputs so the relationship between measurements is visible.</p></div><div><span>03</span><h3>Human review still matters</h3><p>The preview is guidance, not a production pattern. Final made-to-order specifications require confirmation before fulfillment.</p></div></section>
-  </main>
+    <section className="v2MtoTrust"><div><span>01</span><h3>Frame-first profiling</h3><p>Neck, chest, shoulder and torso establish the broad fit direction before detailed measurements are entered.</p></div><div><span>02</span><h3>Reusable local profile</h3><p>Your detailed measurements can be stored in this browser and preloaded on a later made-to-order visit.</p></div><div><span>03</span><h3>Human review still matters</h3><p>Canvas and SVG previews are guidance, not production patterns. Final specifications require confirmation before fulfillment.</p></div></section>
+  </main>;
 }
