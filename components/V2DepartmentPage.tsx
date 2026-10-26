@@ -31,8 +31,8 @@ export function V2DepartmentPage({ department, products, collectionTitle }: { de
 
     {isFutureCollection ? <section className="v2Manifesto">
       <p>COLLECTION IN DEVELOPMENT</p>
-      <h2>No placeholder products. No mismatched stock photography.</h2>
-      <span>This category remains part of the Jentlemens house architecture, but it is not currently offered for sale. Products will appear here only when the inventory, pricing and verified menswear photography are ready.</span>
+      <h2>A considered collection, still to come.</h2>
+      <span>This collection is in development and is not currently available for purchase. Explore the Permanent 10 for the current neckwear offer.</span>
       <Link href="/products/permanent-ten-bundle">Shop the current Permanent 10 offer →</Link>
     </section> : <section className="v2CollectionShell">
       <aside className="v2FilterRail">

@@ -18,7 +18,7 @@ export function CapsuleBuilder(){
   const matches=pairing[suit];
 
   return <section className="capsuleBuilder">
-    <div className="capsuleIntro"><p>WARDROBE PAIRING GUIDE</p><h2>See where the Permanent 10 fits.</h2><span>Choose a permanent tailoring color to see which tie families from the ten-pack naturally work with it. Shirts, shoes and tailoring remain pairing guidance until those categories have confirmed inventory and verified menswear photography.</span></div>
+    <div className="capsuleIntro"><p>WARDROBE PAIRING GUIDE</p><h2>See where the Permanent 10 fits.</h2><span>Choose a tailoring color to explore complementary tie, shirt and footwear colors. Shirts, shoes and tailoring are styling references; the Permanent 10 tie bundle is the current featured offer.</span></div>
     <div className="capsulePalette">{suitPalette.map(([name,hex])=><button type="button" key={name} onClick={()=>setSuit(name)} className={suit===name?"active":""}><i style={{background:hex}}/><b>{name}</b></button>)}</div>
     <div className="capsuleResult">
       <div className="capsuleSuit" style={{background:suitPalette.find(x=>x[0]===suit)?.[1]}}><span>SELECTED TAILORING</span><strong>{suit}</strong><small>Athletic Fit pairing reference</small></div>
