@@ -36,7 +36,7 @@ export function SiteFooter() {
     <div className="v2FooterLead"><Link className="v2Brand light" href="/"><span>J</span><b>JENTLEMENS</b></Link><p>The current offer is deliberately simple: ten coordinated designer ties, one $500 collection, $50 per tie.</p></div>
     <div><b>THE CURRENT OFFER</b><Link href="/products/permanent-ten-bundle">The Permanent 10</Link><Link href="/shirting/ties">View the tie edit</Link><Link href="/">Why the bundle works</Link></div>
     <div><b>THE HOUSE</b>{departmentConfig.map(dept=><Link key={dept.key} href={dept.href}>{dept.label}</Link>)}</div>
-    <div className="v2FooterBottom">© 2026 Jentlemens <a href="https://josephjilovec.com/portfolio" target="_blank" rel="noopener noreferrer" style={{color:'#D4AF37',textDecoration:'none',fontWeight:600}}>A Joseph Jilovec Venture ↗</a><a href="mailto:realjjemail@gmail.com">Contact</a></div>
-    <div className="jj-venture-nav" style={{borderTop:'1px solid rgba(255,255,255,.10)',padding:'1rem 1.25rem 1.15rem',textAlign:'center',fontSize:'.78rem',letterSpacing:'.045em'}}><a href="https://josephjilovec.com/portfolio" target="_blank" rel="noopener noreferrer" style={{color:'#D4AF37',textDecoration:'none',fontWeight:700}}>A Joseph Jilovec Venture</a><span aria-hidden="true" style={{color:'#D4AF37',margin:'0 .65rem',opacity:.7}}>•</span><a href="https://josephjilovec.com/portfolio" target="_blank" rel="noopener noreferrer" style={{color:'#D4AF37',textDecoration:'none',fontWeight:800}}>Explore the Venture Studio →</a></div>
+    <div className="v2FooterBottom">© 2026 Jentlemens <Link href="/fit-guide">Fit guide</Link></div>
+    
   </footer>;
 }
